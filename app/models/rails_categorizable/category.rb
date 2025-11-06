@@ -1,4 +1,5 @@
 # lib/rails_categorizable/category.rb
+# AI: https://chat.qwen.ai/c/3126415e-c658-4562-bc83-66ba22651907
 module RailsCategorizable
   class Category < ActiveRecord::Base
     self.table_name = "rails_categories"
