@@ -26,8 +26,18 @@ module RailsCategorizable
     scope :for, ->(key) { where(scope_key: key.to_s) }
 
     # 抽离的模块
+    include RailsCategorizable::CategorySub::Ancestry
+    include RailsCategorizable::CategorySub::DepthCalculator
     include RailsCategorizable::CategorySub::DynamicAssociations
+    include RailsCategorizable::CategorySub::FlatBuilder
+    include RailsCategorizable::CategorySub::PathFinder
+    include RailsCategorizable::CategorySub::Sorter
     include RailsCategorizable::CategorySub::TreeBuilder
     include RailsCategorizable::CategorySub::Validators
+
+    # 辅助方法，检查 parent_id 是否为 nil 或空字符串
+    def parent_id_blank?
+      parent_id.nil? || parent_id == ""
+    end
   end
 end
