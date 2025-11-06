@@ -1,28 +1,9 @@
-# RailsCategorizable
-Short description and motivation.
-
-## Usage
-How to use my plugin.
+# rails_categorizable
+> Reusable scoped categories for any Rails model.
 
 ## Installation
-Add this line to your application's Gemfile:
-
 ```ruby
-gem "rails_categorizable"
+# Gemfile
+gem 'rails_categorizable'
+gem "rails_categorizable", path: File.expand_path('~/github/rails_categorizable')
 ```
-
-And then execute:
-```bash
-$ bundle
-```
-
-Or install it yourself as:
-```bash
-$ gem install rails_categorizable
-```
-
-## Contributing
-Contribution directions go here.
-
-## License
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).

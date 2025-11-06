@@ -1,6 +1,6 @@
-require "rails_categorizable/version"
 require "rails_categorizable/engine"
+require "rails_categorizable/version"
 
 module RailsCategorizable
-  # Your code goes here...
+  autoload :Categorizable, "rails_categorizable/categorizable"
 end
