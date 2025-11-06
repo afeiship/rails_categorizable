@@ -34,6 +34,49 @@ module RailsCategorizable
     #   RailsCategorizable.configure { |c| c.categorizable_models = ["Post", "Product"] }
     # ------------------------------------------------------------
 
+    # 根据 ID 查找树结构
+    def self.tree_structure(root_id = nil, options = {})
+      if root_id
+        root_node = find(root_id)
+        build_subtree(root_node, options)
+      else
+        # 如果没有指定根节点，则获取所有根节点并构建森林
+        roots = where(parent_id: nil)
+        roots.map { |root| build_subtree(root, options) }
+      end
+    end
+
+    private
+
+    # 递归构建子树结构
+    def self.build_subtree(node, options = {})
+      # 处理字段映射选项
+      id_key = options[:id_key] || :id
+      name_key = options[:name_key] || :name
+      slug_key = options[:slug_key] || :slug
+      children_key = options[:children_key] || :children
+      parent_id_key = options[:parent_id_key] || :parent_id
+      
+      result = {}
+      result[id_key] = node.id
+      result[name_key] = node.name
+      result[slug_key] = node.slug
+      result[:scope_key] = node.scope_key
+      result[parent_id_key] = node.parent_id
+      
+      # 支持自定义额外字段
+      if options[:include]
+        Array(options[:include]).each do |field|
+          result[field] = node.send(field) if node.respond_to?(field)
+        end
+      end
+      
+      result[children_key] = node.children.map { |child| build_subtree(child, options) }
+      result
+    end
+
+    public
+
     def method_missing(method_name, *args, &block)
       model_name_str = method_name.to_s.singularize.capitalize
 
