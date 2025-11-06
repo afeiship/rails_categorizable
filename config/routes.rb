@@ -1,3 +1,2 @@
-RailsCategory::Engine.routes.draw do
-  resources :categories
+RailsCategorizable::Engine.routes.draw do
 end

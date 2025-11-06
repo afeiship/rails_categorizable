@@ -1,55 +1,28 @@
-# rails_category
-> Rails category gem.
+# RailsCategorizable
+Short description and motivation.
 
-## model
-> The users table fileds.
+## Usage
+How to use my plugin.
 
-| field       | type   | length | description          |
-| ----------- | ------ | ------ | -------------------- |
-| name        | string | -      | Category name        |
-| description | string | -      | Category description |
-| parent_id   | string | -      | Category parent id   |
+## Installation
+Add this line to your application's Gemfile:
 
-```shell
-./bin/rails g model Category name:string description:string parent:references
+```ruby
+gem "rails_categorizable"
 ```
 
-## relationship
-```rb
-# model
-class Category < ApplicationRecord
-  has_many :children, class_name: "Category", foreign_key: "parent_id"
-  belongs_to :parent, class_name: "Category"
-end
-
+And then execute:
+```bash
+$ bundle
 ```
 
-## categories tree
-```json
-[
-  {
-    "id": 1,
-    "name": "animal",
-    "description": null,
-    "parent_id": 0,
-    "created_at": "2019-04-25T15:28:35.978Z",
-    "updated_at": "2019-04-25T15:28:35.978Z",
-    "children": [
-      {
-        "id": 2,
-        "name": "dog",
-        "description": "Just a dog",
-        "parent_id": 1,
-        "created_at": "2019-04-25T15:33:52.870Z",
-        "updated_at": "2019-04-25T15:33:52.870Z"
-      }
-    ]
-  }
-]
+Or install it yourself as:
+```bash
+$ gem install rails_categorizable
 ```
 
-## resources
-- https://ruby-china.github.io/rails-guides/association_basics.html#self-joins
-- https://stackoverflow.com/questions/22815009/add-a-reference-column-migration-in-rails-4
-- https://ruby-china.org/topics/20322
-- https://blog.lysender.com/2016/10/rails-5-self-join-belongs_to-entity-must-exist-error/
+## Contributing
+Contribution directions go here.
+
+## License
+The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).

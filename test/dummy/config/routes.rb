@@ -1,3 +1,3 @@
 Rails.application.routes.draw do
-  mount RailsCategory::Engine => "/rails_category"
+  mount RailsCategorizable::Engine => "/rails_categorizable"
 end
