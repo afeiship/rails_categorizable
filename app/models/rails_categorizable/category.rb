@@ -28,10 +28,59 @@ module RailsCategorizable
 
     scope :for, ->(key) { where(scope_key: key.to_s) }
 
+    # ------------------------------------------------------------
+    # 动态反向关联支持（如 c1.posts, c1.products）
+    # 需在 initializer 中配置:
+    #   RailsCategorizable.configure { |c| c.categorizable_models = ["Post", "Product"] }
+    # ------------------------------------------------------------
+
+    def method_missing(method_name, *args, &block)
+      model_name_str = method_name.to_s.singularize.capitalize
+
+      if RailsCategorizable.configuration.categorizable_models.include?(model_name_str)
+        unless self.class.reflect_on_association(method_name)
+          self.class.ensure_categorizable_association(model_name_str)
+        end
+
+        # ✅ 关键：不要用 super，而是直接 send 新方法
+        # 因为方法现在已存在，send 会成功
+        send(method_name, *args, &block)
+      else
+        super
+      end
+    end
+
+    def respond_to_missing?(method_name, include_private = false)
+      model_name_str = method_name.to_s.singularize.capitalize
+      RailsCategorizable.configuration.categorizable_models.include?(model_name_str) ||
+        super
+    end
+
+    # Public class API for dynamic association
+    # Public class API for dynamic association
+    def self.ensure_categorizable_association(model_name)
+      association_method = model_name.underscore.pluralize.to_sym
+      categorization_assoc = :"#{model_name.underscore}_categorizations"
+
+      return if reflect_on_association(association_method)
+
+      has_many categorization_assoc,
+               -> { where(categorizable_type: model_name) },
+               class_name: "RailsCategorizable::Categorization",
+               inverse_of: :category
+
+      # ✅ 关键：添加 source_type: model_name
+      has_many association_method,
+               through: categorization_assoc,
+               source: :categorizable,
+               source_type: model_name
+    end
+
     private
 
     def set_default_slug
-      self.slug = SecureRandom.uuid.gsub(/-/, '')[0..11] if slug.blank?
+      return unless slug.blank?
+      self.slug = SecureRandom.uuid.delete('-')[0..11]
     end
 
     def parent_must_have_same_scope_key
