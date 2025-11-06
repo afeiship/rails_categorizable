@@ -34,11 +34,11 @@ module RailsCategorizable
 
           default_scope { where(scope_key: scope_key) }
 
-          def self.create!(**attributes)
+          # ✅ 修复：接受 hash，不是 keyword args
+          def self.create!(attributes = {})
             super(attributes.merge(scope_key: scope_key))
           end
 
-          # 可选：提供更友好的 inspect
           def self.name
             "#{base_class.name}::Category"
           end
