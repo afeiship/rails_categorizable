@@ -7,7 +7,7 @@ module RailsCategorizable
       end
 
       module ClassMethods
-        def tree_structure(root_id = nil, options = {})
+        def tree(root_id = nil, options = {})
           if root_id
             root_node = find(root_id)
             build_subtree(root_node, options)
@@ -31,7 +31,7 @@ module RailsCategorizable
             name_key => node.name,
             slug_key => node.slug,
             scope_key: node.scope_key,
-            parent_id_key => node.parent_id
+            parent_id_key => node.parent_id,
           }
 
           # 支持自定义字段
