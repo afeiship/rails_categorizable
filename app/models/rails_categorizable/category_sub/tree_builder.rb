@@ -25,7 +25,6 @@ module RailsCategorizable
           slug_key = options[:slug_key] || :slug
           children_key = options[:children_key] || :children
           parent_id_key = options[:parent_id_key] || :parent_id
-          recursive = options.key?(:recursive) ? options[:recursive] : true
 
           result = {
             id_key => node.id,
@@ -40,34 +39,7 @@ module RailsCategorizable
             result[field] = node.send(field) if node.respond_to?(field)
           end
 
-          if recursive
-            result[children_key] = node.children.map { |child| build_subtree(child, options) }
-          else
-            result[children_key] = node.children.map { |child| build_leaf(child, options) }
-          end
-          result
-        end
-
-        def build_leaf(node, options = {})
-          id_key = options[:id_key] || :id
-          name_key = options[:name_key] || :name
-          slug_key = options[:slug_key] || :slug
-          children_key = options[:children_key] || :children
-          parent_id_key = options[:parent_id_key] || :parent_id
-
-          result = {
-            id_key => node.id,
-            name_key => node.name,
-            slug_key => node.slug,
-            scope_key: node.scope_key,
-            parent_id_key => node.parent_id,
-          }
-
-          Array(options[:include]).each do |field|
-            result[field] = node.send(field) if node.respond_to?(field)
-          end
-
-          result[children_key] = []
+          result[children_key] = node.children.map { |child| build_subtree(child, options) }
           result
         end
       end
