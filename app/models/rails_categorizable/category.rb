@@ -88,6 +88,7 @@ module RailsCategorizable
                source_type: model_name
     end
 
+    # =========================  private =============================
     private
 
     def set_default_slug
