@@ -46,37 +46,6 @@ module RailsCategorizable
       end
     end
 
-    private
-
-    # 递归构建子树结构
-    def self.build_subtree(node, options = {})
-      # 处理字段映射选项
-      id_key = options[:id_key] || :id
-      name_key = options[:name_key] || :name
-      slug_key = options[:slug_key] || :slug
-      children_key = options[:children_key] || :children
-      parent_id_key = options[:parent_id_key] || :parent_id
-      
-      result = {}
-      result[id_key] = node.id
-      result[name_key] = node.name
-      result[slug_key] = node.slug
-      result[:scope_key] = node.scope_key
-      result[parent_id_key] = node.parent_id
-      
-      # 支持自定义额外字段
-      if options[:include]
-        Array(options[:include]).each do |field|
-          result[field] = node.send(field) if node.respond_to?(field)
-        end
-      end
-      
-      result[children_key] = node.children.map { |child| build_subtree(child, options) }
-      result
-    end
-
-    public
-
     def method_missing(method_name, *args, &block)
       model_name_str = method_name.to_s.singularize.capitalize
 
@@ -130,6 +99,33 @@ module RailsCategorizable
       return unless parent
       return if parent.scope_key == scope_key
       errors.add(:parent, "must belong to the same scope (#{scope_key})")
+    end
+
+    # 递归构建子树结构
+    def self.build_subtree(node, options = {})
+      # 处理字段映射选项
+      id_key = options[:id_key] || :id
+      name_key = options[:name_key] || :name
+      slug_key = options[:slug_key] || :slug
+      children_key = options[:children_key] || :children
+      parent_id_key = options[:parent_id_key] || :parent_id
+      
+      result = {}
+      result[id_key] = node.id
+      result[name_key] = node.name
+      result[slug_key] = node.slug
+      result[:scope_key] = node.scope_key
+      result[parent_id_key] = node.parent_id
+      
+      # 支持自定义额外字段
+      if options[:include]
+        Array(options[:include]).each do |field|
+          result[field] = node.send(field) if node.respond_to?(field)
+        end
+      end
+      
+      result[children_key] = node.children.map { |child| build_subtree(child, options) }
+      result
     end
   end
 end
